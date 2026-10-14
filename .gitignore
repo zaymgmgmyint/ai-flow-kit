@@ -1,0 +1,12 @@
+# Local AI tool settings and session files: never commit
+.claude/
+.codex/
+.opencode/
+.cursor/
+.agents/
+CLAUDE.local.md
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

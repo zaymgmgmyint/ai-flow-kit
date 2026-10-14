@@ -1,0 +1,40 @@
+---
+name: flow-build
+description: Build one ticket or one planned change with red-green tests, across one or more repos, and prove it works. Use when the plan or ticket is agreed. Do not use when design decisions are still open.
+---
+
+Build exactly one ticket. Make it observable, then make it pass.
+
+# Set up
+- Read the ticket (from `tickets.md` or the plan in chat) and each repo's agent instructions file (AGENTS.md or CLAUDE.md).
+- One git worktree per repo touched, on a branch named `<ticket-id>-<short-slug>`. Reuse a worktree if it already exists.
+- Find each repo's verify command (AGENTS.md or CLAUDE.md, build file, README). If you can't find one, ask.
+
+# Loop (red-green)
+- One test → watch it fail for the right reason (not a setup error) → minimal code to pass → next test.
+- No batch of tests up front.
+- Test only at the seams the ticket or spec names. Need a new seam? Stop and ask.
+- Mock only real boundaries: external APIs, devices, time, randomness. Never mock our own modules.
+- Avoid tests that break on an internal rename, or that compute the expected value the same way the code does.
+- Backend contract changes come before the frontend or edge code that uses them.
+- E2E or browser tests come after the behaviour works.
+
+# Stay in scope
+- Build only what the ticket says. Note other issues in "Found along the way". Don't fix them.
+- Batch small choices and report them at the end. Stop only if a choice changes the ticket's behaviour or data.
+- Stuck after two attempts on the same failure? Stop and report what you tried and what you need.
+
+# Done means
+- Every acceptance box is backed by a passing test.
+- Verify command passes in every repo touched.
+- Run the `flow-reviewer` sub-agent on the diff. No sub-agents? Do a separate review pass yourself: wrong behaviour, data loss, security, broken contracts, retries, tests. Fix real findings, list the rest.
+- Update the ticket's `Status:` line in `tickets.md` if it exists.
+
+# Report
+- Commands run and their results.
+- Per repo: files changed, one line each.
+- **Verified** (test or command proves it) vs **Not verified** (needs my eyes, e.g. UI look, device behaviour).
+- Found along the way.
+- Do not commit or push unless I say so.
+
+Plain language. No em dashes.

@@ -6,6 +6,52 @@ Skills and agents for AI coding agents: fix bugs test-first, build tickets in sm
 
 ## Install
 
+Two ways. Pick one.
+
+| | Option A: `npx skills` | Option B: clone + `install.sh` |
+|---|---|---|
+| Installs | 8 skills | 8 skills + 3 sub-agents (Claude Code) |
+| Needs | Node.js | git, bash |
+| Update | Run the add command again | `git pull` |
+| Best for | Quick setup, any tool | Editing the skills yourself |
+
+### Option A: one command with `npx skills`
+
+Uses the [skills](https://github.com/vercel-labs/skills) installer. It reads this repo straight from GitHub, finds every `skills/<name>/SKILL.md`, and puts them in the right folder for each AI tool it detects (Claude Code, Codex, OpenCode, Cursor, Gemini CLI and more).
+
+```bash
+# See what's inside first (installs nothing)
+npx skills add zaymgmgmyint/ai-flow-kit --list
+
+# Install for your user, in every project
+npx skills add zaymgmgmyint/ai-flow-kit -g
+
+# Install into one project only (run inside that project's folder)
+cd ~/work/my-project
+npx skills add zaymgmgmyint/ai-flow-kit
+```
+
+More options:
+
+```bash
+# Only some skills
+npx skills add zaymgmgmyint/ai-flow-kit -g --skill flow-bug --skill flow-pr-review
+
+# Only some tools
+npx skills add zaymgmgmyint/ai-flow-kit -g -a claude-code -a opencode
+```
+
+| Scope | Where skills go | Works in |
+|---|---|---|
+| Global (`-g`) | Your home folder, e.g. `~/.claude/skills`, `~/.agents/skills` | Every project |
+| Project (no `-g`) | Inside the project, e.g. `./.claude/skills`, `./.agents/skills` | Only that project |
+
+Project installs can be committed so the whole team gets the skills when they clone the repo. If you don't want that, add those folders to the project's `.gitignore`.
+
+To update, run the same `add` command again.
+
+### Option B: clone and run the install script
+
 ```bash
 git clone https://github.com/zaymgmgmyint/ai-flow-kit.git ~/dev-tools/ai-flow-kit
 cd ~/dev-tools/ai-flow-kit
@@ -22,7 +68,54 @@ The script symlinks the skills, so `git pull` updates them. It never overwrites 
 
 Options: `--target agents` (shared folder only), `--target claude` (Claude Code only), `--copy` (copy instead of symlink).
 
-Restart your tool after installing.
+### Check it worked
+
+Restart your AI tool, then:
+
+- **Claude Code:** type `/skills`. You should see the 8 `flow-*` skills. Type `/agents` for the sub-agents (Option B only).
+- **Other tools:** ask "what skills do you have?" or check the folder, e.g. `ls ~/.agents/skills`.
+
+## Use
+
+Open your AI tool **in the project folder** (or the parent folder of your backend and frontend repos), then call a skill.
+
+**Claude Code and tools with slash commands:**
+
+```
+/flow-bug <paste the bug ticket>
+/flow-start <paste any ticket or request>
+/flow-pr-review 123
+```
+
+**Tools without slash commands:** ask for the skill by name.
+
+```
+Use flow-bug on this ticket: <paste the ticket>
+```
+
+### Which skill when
+
+| You have... | Run | You get |
+|---|---|---|
+| A bug ticket (small or medium) | `/flow-bug <ticket>` | Failing test, cause, fix, proof, ticket note |
+| Any ticket, not sure what kind | `/flow-start <ticket>` | Bug or change, size, and the next skill to run |
+| A clear, small change | `/flow-build <ticket>` | Short plan to approve, then code with tests |
+| A fuzzy idea | `/flow-grill <idea>` | Questions with recommended answers, then decisions.md |
+| A big, multi-session feature | `/flow-spec`, then `/flow-tickets` | spec.md, then paste-ready tickets |
+| One of those tickets | `/flow-build T3` | That ticket built and verified |
+| A teammate's pull request | `/flow-pr-review <number, URL or branch>` | Verdict and draft review comments |
+| A few finished items | `/flow-retro` | Up to 3 changes to improve the skills |
+
+### What you do
+
+- Answer a question only when the ticket is missing something that blocks the work.
+- Approve the plan for a change (`flow-build`).
+- Review the final report and the diff, then **commit yourself**. The skills never commit, push or merge.
+- For PR reviews, edit the draft and post it, or say "post it".
+
+### Before your first run
+
+Make sure each repo has an `AGENTS.md` or `CLAUDE.md` with its verify command (see [Project setup](#project-setup)). Without it, the agent will ask you which command runs the tests.
 
 ## The flow
 

@@ -143,7 +143,7 @@ Most daily work (small and medium bugs with a ticket) goes straight to `/flow-bu
 | flow-tickets | Vertical slices, blocking order, paste-ready blocks | tickets.md |
 | flow-build | One ticket, worktree per repo, red-green, verify, review | code + report |
 | flow-retro | Max 3 evidence-based changes to the setup | edits after approval |
-| flow-pr-review | Teammate's PR: ticket match, build, deep review, draft comments | review draft (posts only if you say so) |
+| flow-pr-review | Teammate's PR: spec check, build, deep review, every finding verified | review in a fixed format (see `review-template.md`), posts only if you say so |
 
 ## Sub-agents
 
@@ -178,6 +178,23 @@ Ticket note:
 ```
 
 Nothing is committed or pushed. You review the diff and commit.
+
+## PR review format
+
+`/flow-pr-review` always drafts the same two-part review, defined in [`skills/flow-pr-review/review-template.md`](skills/flow-pr-review/review-template.md):
+
+1. **Summary comment:** verdict, what the PR does, merge danger (easy or hard to undo), **Spec** (does it do what the ticket asks?) and **Standards** (build result, blocking and non-blocking findings), questions, and one thing done well.
+2. **Line comments:** one per finding, each starting with a label.
+
+| Label | Author must... |
+|---|---|
+| `issue (blocking)` | Fix before merge |
+| `suggestion (non-blocking)` | Decide |
+| `question` | Answer |
+| `nit` | Optional |
+| `praise` | Nothing |
+
+Every finding is checked against the actual file before it's kept, and names its source: a rule from AGENTS.md or CLAUDE.md, a quoted ticket line, or a named practice. Any blocking issue or a red build means **Request changes**.
 
 ## Project setup
 

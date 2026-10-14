@@ -35,7 +35,7 @@ Make the failure observable before changing any code.
 # 6. Prove it
 - Regression test passes.
 - Verify command passes in every repo touched.
-- Run the `flow-reviewer` sub-agent on the diff. No sub-agents? Do a separate review pass yourself: wrong behaviour, data loss, security, broken contracts, retries, tests. Fix real findings, list the rest.
+- Run the `flow-reviewer` sub-agent on the diff. No sub-agents? Do a separate review pass yourself: wrong behaviour, data loss, security, broken contracts, retries, tests. Open the file at each finding and confirm it before acting. Fix real findings, list the rest.
 
 # 7. Report
 - **Cause** (confirmed / suspected) and **Fix**, one line each.

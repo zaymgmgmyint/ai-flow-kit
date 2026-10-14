@@ -27,7 +27,7 @@ Build exactly one ticket. Make it observable, then make it pass.
 # Done means
 - Every acceptance box is backed by a passing test.
 - Verify command passes in every repo touched.
-- Run the `flow-reviewer` sub-agent on the diff. No sub-agents? Do a separate review pass yourself: wrong behaviour, data loss, security, broken contracts, retries, tests. Fix real findings, list the rest.
+- Run the `flow-reviewer` sub-agent on the diff. No sub-agents? Do a separate review pass yourself: wrong behaviour, data loss, security, broken contracts, retries, tests. Open the file at each finding and confirm it before acting. Fix real findings, list the rest.
 - Update the ticket's `Status:` line in `tickets.md` if it exists.
 
 # Report

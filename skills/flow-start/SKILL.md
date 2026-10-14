@@ -3,7 +3,7 @@ name: flow-start
 description: Start any new piece of dev work from a ticket or request (bug, feature, change, idea). Sorts it and picks the next step. Use at the start of a task. Do not use for a code review.
 ---
 
-Decide what kind of work this is and how much process it needs, then hand off. Do not write code here.
+Decide what kind of work this is and how much process it needs, then hand off. Do not write code here, not even for tiny work. This skill only routes.
 
 # Bug or not?
 - If the ticket describes something that worked wrong (error, wrong data, wrong behaviour, crash, timeout), it's a bug. Go `flow-bug`, whatever its size.
@@ -16,7 +16,7 @@ Decide what kind of work this is and how much process it needs, then hand off. D
 
 # Size the work (not a bug)
 Pick one size and say why in one line:
-- **Tiny:** one file or a few lines, no decision to make (typo, config, rename, copy change). Just do it. Then run the project's verify command and report.
+- **Tiny:** one file or a few lines, no decision to make (typo, config, rename, copy change). Go `flow-build` in tiny mode.
 - **One session:** decisions are clear and it fits one context window. Write a short plan (goal, files, test, verify command) and wait for "go". Then use `flow-build`.
 - **Multi-session:** spans several sessions or several repos, or has many steps. Go `flow-spec` then `flow-tickets`.
 - **Not decided yet:** goal or behaviour is unclear, or there are open design choices. Go `flow-grill` first.

@@ -74,7 +74,9 @@ The script symlinks the skills, so `git pull` updates them. It never overwrites 
 | Google Antigravity (if `~/.gemini` exists) | Skills in `~/.gemini/antigravity-cli/skills` (CLI) and `~/.gemini/config/skills` (IDE) |
 | Any other tool | Copy or link `skills/*` into the folder that tool reads skills from |
 
-Options: `--target agents`, `--target claude` or `--target antigravity` (one tool only), `--copy` (copy instead of symlink).
+Options: `--target agents`, `--target claude` or `--target antigravity` (one tool only), `--copy` (copy instead of symlink), `--uninstall` (remove only the `flow-*` entries, keep everything else), `--help`.
+
+Running it again is safe: it only adds what is missing and never overwrites. To update copied files (`--copy`, or the Claude Code sub-agents), run `--uninstall` and then install again.
 
 ### Check it worked
 
@@ -189,7 +191,7 @@ Make sure each repo has an `AGENTS.md` or `CLAUDE.md` with its verify command (s
 /flow-start  →  bug or change?
    ├─ bug (any size)  → /flow-bug: restate → reproduce with a failing test → cause → fix → prove
    └─ change
-        ├─ tiny            → just do it, verify
+        ├─ tiny            → /flow-build (tiny mode: change, verify, report)
         ├─ one session     → short plan → /flow-build
         ├─ multi-session   → /flow-spec → /flow-tickets → /flow-build (per ticket)
         └─ not decided     → /flow-grill → then one of the above
@@ -210,6 +212,47 @@ Most daily work (small and medium bugs with a ticket) goes straight to `/flow-bu
 | flow-build | One ticket, worktree per repo, red-green, verify, review | code + report |
 | flow-retro | Max 3 evidence-based changes to the setup | edits after approval |
 | flow-pr-review | Teammate's PR: spec check, build, deep review, every finding verified | review in a fixed format (see `review-template.md`), posts only if you say so |
+
+### Stages at a glance
+
+What each skill needs, what it hands over, and who decides next.
+
+| Skill | Needs | Hands over | Next |
+|---|---|---|---|
+| flow-start | A ticket or request | Bug or change, size, repos, chosen route | The chosen skill |
+| flow-grill | An unclear request | decisions.md: decisions, open questions, out of scope | flow-build or flow-spec |
+| flow-spec | Confirmed decisions | spec.md with agreed test seams | flow-tickets |
+| flow-tickets | An agreed spec | tickets.md: slices in order, each with acceptance and a demo | flow-build, one ticket at a time |
+| flow-build | An agreed ticket or plan | Code, tests, report with Status | **You** review and commit |
+| flow-bug | A bug ticket | Failing-then-passing test, cause, fix, ticket note, Status | **You** review and commit |
+| flow-pr-review | A PR and its ticket | Review draft in the fixed format | **You** edit and post |
+| flow-retro | A few finished items | Up to 3 proposed changes | **You** approve, then it edits |
+
+### Verification modes
+
+`flow-build` and `flow-bug` say which mode they used, and why.
+
+| Mode | When | Evidence in the report |
+|---|---|---|
+| Tiny | Typo, config value, rename, no behaviour change | Verify command result |
+| Test-first (default) | Any behaviour change or bug | Test failed before, passes after |
+| Test-supported | Behaviour can't be isolated in a failing test first | Why, the tests added after, all checks |
+| Manual | Docs, visuals, infra, real devices | Steps, expected and observed result |
+
+Checks report **pass**, **fail** or **blocked** (couldn't run, e.g. no database). Blocked is never counted as pass, and skipped tests are listed.
+
+## Safety
+
+The skills stop and ask before each of these, every time:
+
+- commit, push, merge
+- deploy, or change shared environments and infrastructure
+- delete data, or run destructive database commands (drop, truncate, delete or update without a filter)
+- post review comments
+
+One "yes" covers that one action only. Reading, searching, editing code in the work branch, creating worktrees and running local tests go ahead without asking, inside the task.
+
+Every report ends with a **Status**: the work is done and waiting for you. It isn't accepted until you say so.
 
 ## Sub-agents
 
@@ -288,6 +331,13 @@ For work across backend and frontend, keep repos side by side and start your too
 
 - Change the work folder: replace `~/flow/` in the skills.
 - After a few work items, run `/flow-retro` and let the evidence change the skills.
+- After editing, run `./scripts/validate.sh`. It checks skill and agent metadata, references between skills, README links, and the installer (install, rerun, uninstall) in a throwaway folder. The same check runs on GitHub for every push.
+
+## Known limits
+
+- The skills are plain instructions. Agents follow them most of the time, not every time. Watch the runs that matter and use `/flow-retro` to fix repeated misses.
+- The installer and file checks are tested automatically. The skills themselves have been used in Claude Code; Codex, OpenCode and Antigravity support comes from each tool's skill folder docs and is not yet tested end to end. Reports of what works or breaks are welcome.
+- Sub-agents install automatically for Claude Code only. Other tools run the same steps inside the main session.
 
 ## Credits
 

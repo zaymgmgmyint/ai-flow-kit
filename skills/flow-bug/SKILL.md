@@ -32,18 +32,20 @@ Make the failure observable before changing any code.
 - No refactors or cleanups. Put them in "Found along the way".
 - Two failed fix attempts on the same cause? Stop and report.
 
+- Ask first, every time: commit, push, merge, deploy, delete data, destructive database commands (drop, truncate, delete or update without a filter), changes to shared environments. One "yes" covers that one action only.
+
 # 6. Prove it
-- Regression test passes.
-- Verify command passes in every repo touched.
+- Regression test passes (or the manual steps now show the right result).
+- Verify command passes in every repo touched. A check that could not run is **blocked**, not passed.
 - Run the `flow-reviewer` sub-agent on the diff. No sub-agents? Do a separate review pass yourself: wrong behaviour, data loss, security, broken contracts, retries, tests. Open the file at each finding and confirm it before acting. Fix real findings, list the rest.
 
 # 7. Report
 - **Cause** (confirmed / suspected) and **Fix**, one line each.
 - **Test:** name, file, failed before / passes after.
-- **Commands run** and results.
+- **Commands run** and results (pass / fail / blocked, and any skipped tests).
 - **Not verified:** what needs my eyes.
 - **Found along the way.**
 - **Ticket note:** 3 to 5 plain lines I can paste into the ticket (cause, fix, how it was tested).
-- Do not commit or push unless I say so.
+- **Status:** fix done, waiting for your review. It is not accepted until you say so.
 
 Plain language. No em dashes.

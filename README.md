@@ -12,12 +12,12 @@ Two ways. Pick one.
 |---|---|---|
 | Installs | 8 skills | 8 skills + 3 sub-agents (Claude Code) |
 | Needs | Node.js | git, bash |
-| Update | Run the add command again | `git pull` |
+| Update | `npx skills update` | `git pull` |
 | Best for | Quick setup, any tool | Editing the skills yourself |
 
 ### Option A: one command with `npx skills`
 
-Uses the [skills](https://github.com/vercel-labs/skills) installer. It reads this repo straight from GitHub, finds every `skills/<name>/SKILL.md`, and puts them in the right folder for each AI tool it detects (Claude Code, Codex, OpenCode, Cursor, Gemini CLI and more).
+Uses the [skills](https://github.com/vercel-labs/skills) installer. It reads this repo straight from GitHub, finds every `skills/<name>/SKILL.md`, and puts them in the right folder for each AI tool you choose (Claude Code, Codex, OpenCode, Google Antigravity, Cursor, Gemini CLI and more). For one command per tool, see [Install for your tool](#install-for-your-tool).
 
 ```bash
 # See what's inside first (installs nothing)
@@ -48,7 +48,14 @@ npx skills add zaymgmgmyint/ai-flow-kit -g -a claude-code -a opencode
 
 Project installs can be committed so the whole team gets the skills when they clone the repo. If you don't want that, add those folders to the project's `.gitignore`.
 
-To update, run the same `add` command again.
+> **Always pass `-a` for the tools you use.** Without it, the installer guesses from what it detects. It can put skills only in `.agents/skills`, which Claude Code does not read.
+
+To update later:
+
+```bash
+npx skills update -g     # global installs
+npx skills update -p     # project installs (run from the project root)
+```
 
 ### Option B: clone and run the install script
 
@@ -64,9 +71,10 @@ The script symlinks the skills, so `git pull` updates them. It never overwrites 
 |---|---|
 | Shared folder `~/.agents/skills` | All 8 skills. Read by Codex and OpenCode, among others |
 | Claude Code (if `~/.claude` exists) | Skills in `~/.claude/skills`, sub-agents in `~/.claude/agents` |
+| Google Antigravity (if `~/.gemini` exists) | Skills in `~/.gemini/antigravity-cli/skills` (CLI) and `~/.gemini/config/skills` (IDE) |
 | Any other tool | Copy or link `skills/*` into the folder that tool reads skills from |
 
-Options: `--target agents` (shared folder only), `--target claude` (Claude Code only), `--copy` (copy instead of symlink).
+Options: `--target agents`, `--target claude` or `--target antigravity` (one tool only), `--copy` (copy instead of symlink).
 
 ### Check it worked
 
@@ -74,6 +82,64 @@ Restart your AI tool, then:
 
 - **Claude Code:** type `/skills`. You should see the 8 `flow-*` skills. Type `/agents` for the sub-agents (Option B only).
 - **Other tools:** ask "what skills do you have?" or check the folder, e.g. `ls ~/.agents/skills`.
+
+## Install for your tool
+
+Pick your tool. Global installs (`-g`) are recommended for a personal flow: they work in every project and add nothing to your work repos.
+
+| Tool | `-a` name | Global folder | Project folder | Call a skill |
+|---|---|---|---|---|
+| Claude Code | `claude-code` | `~/.claude/skills/` | `.claude/skills/` | `/flow-bug ...` |
+| Codex | `codex` | `~/.agents/skills/` | `.agents/skills/` | Name it: "use flow-bug on ..." |
+| OpenCode | `opencode` | `~/.config/opencode/skills/` | `.agents/skills/` | Name it: "use flow-bug on ..." |
+| Google Antigravity CLI (`agy`) | `antigravity-cli` | `~/.gemini/antigravity-cli/skills/` | `.agents/skills/` | `/flow-bug ...` |
+| Google Antigravity IDE | `antigravity` | `~/.gemini/antigravity/skills/` | `.agents/skills/` | `/flow-bug ...` in the agent panel |
+
+All tools also pick a skill on their own when your request matches its description, so naming it is a way to make sure.
+
+### Claude Code
+
+```bash
+npx skills add zaymgmgmyint/ai-flow-kit -g -a claude-code
+```
+
+Start a new session and type `/skills`. You should see the 8 `flow-*` skills.
+
+For the 3 sub-agents (explorer, reviewer, verifier) as well, use Option B: `./install.sh --target claude`.
+
+### Codex
+
+```bash
+npx skills add zaymgmgmyint/ai-flow-kit -g -a codex
+```
+
+Start a new Codex session and ask: "what skills do you have?" Then: "use flow-bug on this ticket: ...".
+
+### OpenCode
+
+```bash
+npx skills add zaymgmgmyint/ai-flow-kit -g -a opencode
+```
+
+OpenCode also reads `~/.claude/skills` and `~/.agents/skills`. If you already installed for Claude Code or Codex, it may see each skill twice. Install for one of them only if that happens.
+
+### Google Antigravity
+
+```bash
+# CLI (agy)
+npx skills add zaymgmgmyint/ai-flow-kit -g -a antigravity-cli
+
+# IDE
+npx skills add zaymgmgmyint/ai-flow-kit -g -a antigravity
+```
+
+In the CLI, each skill becomes a slash command: type `/flow-bug`. In the IDE, check the **Customizations** menu in the agent side panel to see active skills.
+
+### Several tools at once
+
+```bash
+npx skills add zaymgmgmyint/ai-flow-kit -g -a claude-code -a codex -a opencode -a antigravity-cli
+```
 
 ## Use
 

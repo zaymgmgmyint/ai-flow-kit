@@ -4,6 +4,7 @@
 #   ./install.sh                 # auto: shared folder + every supported tool found
 #   ./install.sh --target agents # only ~/.agents/skills (Codex, OpenCode, other tools that read it)
 #   ./install.sh --target claude # only Claude Code (~/.claude/skills + ~/.claude/agents)
+#   ./install.sh --target antigravity # only Google Antigravity CLI (agy) and IDE
 #   ./install.sh --copy          # copy skills instead of symlinking
 #
 # Skills are symlinked by default, so `git pull` updates them.
@@ -67,7 +68,13 @@ if [ "$TARGET" = "claude" ] || { [ "$TARGET" = "auto" ] && [ -d "$HOME/.claude" 
   install_claude_agents
   did="$did claude"
 fi
-[ -z "$did" ] && { echo "Nothing installed. Use --target agents or --target claude."; exit 1; }
+if [ "$TARGET" = "antigravity" ] || { [ "$TARGET" = "auto" ] && [ -d "$HOME/.gemini" ]; }; then
+  echo "== Google Antigravity (~/.gemini)"
+  install_skills "$HOME/.gemini/antigravity-cli/skills"   # CLI (agy)
+  install_skills "$HOME/.gemini/config/skills"            # IDE
+  did="$did antigravity"
+fi
+[ -z "$did" ] && { echo "Nothing installed. Use --target agents, claude or antigravity."; exit 1; }
 
 mkdir -p "$HOME/flow"
 echo "Done. Restart your AI coding tool, then try: /flow-bug or /flow-start"
